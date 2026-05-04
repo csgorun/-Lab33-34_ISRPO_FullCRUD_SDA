@@ -1,0 +1,30 @@
+###
+GET http://localhost:5000/api/notes
+###
+GET http://localhost:5000/api/notes?categoryId=2
+###
+GET http://localhost:5000/api/notes?search=LINQ
+###
+POST http://localhost:5000/api/notes
+Content-Type: application/json
+{
+  "title": "Тестовая заметка (Ошибка)",
+  "content": "Должна вернуть 400, так как категории 99 нет",
+  "categoryId": 99,
+  "priority": 3
+}
+###
+POST http://localhost:5000/api/notes
+Content-Type: application/json
+{
+  "title": "Изучить C#",
+  "content": "Пройти лабораторные работы.",
+  "categoryId": 1,
+  "priority": 3
+}
+###
+PATCH http://localhost:5000/api/notes/1/pin
+###
+PATCH http://localhost:5000/api/notes/5/archive
+###
+GET http://localhost:5000/api/notes?archived=true
