@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+
 namespace NotesApp.Models;
 
 public class Category
@@ -19,5 +20,4 @@ public class Category
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public List<Note> Notes { get; set; } = new();
-
 }
