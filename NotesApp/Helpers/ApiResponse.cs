@@ -7,11 +7,27 @@ public class ApiResponse<T>
     public T? Data { get; set; }
     public int StatusCode { get; set; }
 
-    public static ApiResponse<T> Ok(T data, string message = "Успешно") =>
-    new() { Success = true, Data = data, Message = message, StatusCode = 200 };
+    public static ApiResponse<T> Ok(string message = "Успешно", T? data = default)
+    {
+        return new ApiResponse<T>
+        {
+            Success = true,
+            Message = message,
+            Data = data,
+            StatusCode = 200
+        };
+    }
 
-    public static ApiResponse<T> Created(T data, string message = "Создано успешно")
-    => new() {Success = true, Data = data, Message = message, StatusCode = 201 };
+    public static ApiResponse<T> Created(string message, T? data)
+    {
+        return new ApiResponse<T>
+        {
+            Success = true,
+            Message = message,
+            Data = data,
+            StatusCode = 201
+        };
+    }
 }
 
 public class ApiError
@@ -22,12 +38,30 @@ public class ApiError
     public int StatusCode { get; set; }
 
     public static ApiError NotFound(string message)
-    =>new() { Message = message, StatusCode = 404 };
+    {
+        return new ApiError
+        {
+            Message = message,
+            StatusCode = 404
+        };
+    }
 
     public static ApiError BadRequest(string message, List<string>? errors = null)
-    => new() { Message = message, Errors = errors ?? new(), StatusCode = 400 };
+    {
+        return new ApiError
+        {
+            Message = message,
+            Errors = errors ?? new List<string>(),
+            StatusCode = 400
+        };
+    }
 
     public static ApiError Internal(string message = "Внутренняя ошибка сервера")
-    => new() { Message = message, StatusCode = 500 };
-
+    {
+        return new ApiError
+        {
+            Message = message,
+            StatusCode = 500
+        };
+    }
 }

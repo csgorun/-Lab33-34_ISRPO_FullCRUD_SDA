@@ -13,13 +13,11 @@ public class NoteRepository : INoteRepository
     {
         _db = db;
     }
-
-    // 4.1. GetAllAsync: динамическая фильтрация, сортировка, пагинация и проекция в DTO
     public async Task<IEnumerable<NoteResponseDto>> GetAllAsync(NoteFilterDto filter)
     {
         var query = _db.Notes
             .Include(n => n.Category)
-            .Where(n => !n.IsArchived) // По умолчанию скрываем архивные
+            .Where(n => !n.IsArchived) 
             .AsQueryable();
 
         if (filter.Archived.HasValue)
@@ -46,8 +44,6 @@ public class NoteRepository : INoteRepository
             "updatedat" => filter.Descending ? query.OrderByDescending(n => n.UpdatedAt) : query.OrderBy(n => n.UpdatedAt),
             _ => filter.Descending ? query.OrderByDescending(n => n.CreatedAt) : query.OrderBy(n => n.CreatedAt),
         };
-
-        // Закреплённые всегда сверху, архивные всегда внизу
         query = query.OrderByDescending(n => n.IsPinned)
                      .ThenBy(n => n.IsArchived);
 
@@ -73,8 +69,6 @@ public class NoteRepository : INoteRepository
             })
             .ToListAsync();
     }
-
-    // 4.2. GetByIdAsync: получение одной заметки с данными категории
     public async Task<NoteResponseDto?> GetByIdAsync(int id)
     {
         return await _db.Notes
@@ -97,7 +91,7 @@ public class NoteRepository : INoteRepository
             .FirstOrDefaultAsync();
     }
 
-    // 4.3. CreateAsync: создание заметки
+
     public async Task<Note> CreateAsync(Note note)
     {
         _db.Notes.Add(note);
@@ -105,7 +99,7 @@ public class NoteRepository : INoteRepository
         return note;
     }
 
-    // 4.4. UpdateAsync: обновление с автоматическим UpdatedAt
+  
     public async Task<Note> UpdateAsync(Note note)
     {
         note.UpdatedAt = DateTime.UtcNow;
@@ -114,20 +108,16 @@ public class NoteRepository : INoteRepository
         return note;
     }
 
-    // 4.5. DeleteAsync: удаление
     public async Task DeleteAsync(Note note)
     {
         _db.Notes.Remove(note);
         await _db.SaveChangesAsync();
     }
-
-    // 4.6. FindAsync: быстрая проверка по первичному ключу (для контроллера PUT/PATCH)
     public async Task<Note?> FindAsync(int id)
     {
         return await _db.Notes.FindAsync(id);
     }
 
-    // 4.7. GetCountByCategoryAsync: подсчёт заметок в категории
     public async Task<int> GetCountByCategoryAsync(int categoryId)
     {
         return await _db.Notes.CountAsync(n => n.CategoryId == categoryId && !n.IsArchived);
